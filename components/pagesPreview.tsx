@@ -7,15 +7,15 @@ function previewFromUrl(
     url: string, 
     scrollTop: number, 
     scrollHeight: number, 
+    topPreview: number,
     click: Function
 ) {
     
     const dist = Math.abs(selectedIndex - index);
     
-    const top = (document.querySelector(`[data-index="${index}"]`) as HTMLElement)?.offsetTop;
-    const scrollDist = top > scrollTop ? top - scrollTop : scrollTop - top;
+    const scrollDist = topPreview > scrollTop ? topPreview - scrollTop : scrollTop - topPreview;
 
-    const useRealImage = (scrollHeight && top ? scrollDist < window.innerHeight*2 : dist < 5);
+    const useRealImage = (scrollHeight && topPreview ? scrollDist < window.innerHeight*2 : dist < 5);
 
     return (
         <img width="100%" key={index} data-index={index} src={useRealImage ? (url/*+'.thumb'*/) : undefined} className={`pagePreview ${selectedIndex == index ? 'selected' : ''} ${useRealImage ? '' : 'placeholder'}`} onClick={e => click(index)} />
@@ -33,8 +33,10 @@ JSX.Element[] {
     const arr: JSX.Element[] = [];
     let i = 0;
     
+    const top = (document.querySelector(`[data-index="${selectedIndex}"]`) as HTMLElement)?.offsetTop;
+
     for (let url of urls) {
-        arr.push(previewFromUrl(selectedIndex, i++, url, scrollTop, scrollHeight, click));
+        arr.push(previewFromUrl(selectedIndex, i++, url, scrollTop, scrollHeight, top, click));
     }
     
     return arr;
