@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/comic.css';
+import '../styles/comicDisplay.css';
 import ComicRenderer from '../ts/ComicRenderer'
 
 interface ClickHandler {
