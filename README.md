@@ -17,6 +17,7 @@
 />
 ```
 <hr>
+
 ### Required and optional props:
 `pages: Array<string>` - **Required** - The URLs of the comic pages  
 `previewPages?: Array<string>` - Optional - The URLs of the preview pages. You may pass the URL to lower resolution pages for making it lightweight. If no `previewPages` is provided, it will use `pages` for the preview panel.  
@@ -24,6 +25,7 @@
 `onClose?: Function` - Optional - The function that will be called when the menu back arrow is clicked. If no function is provided, the back arrow won't be shown.  
 `onReadPage?: Function` - Optional - The function to be called when the reader goes to a new page. The index of the page will be passed as parameter.  
 <hr>
+
 #### Notes  
 * If you pass URLs to ultra hight resolution and non optimized pages, it will runs slow. Use a mid-resolution and highly optimized images for better performance.   
 * I am new to React world. Feel free to contribute.  
