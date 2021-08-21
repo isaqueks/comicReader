@@ -27,6 +27,6 @@
 <hr>
 
 #### Notes  
-* If you pass URLs to ultra hight resolution and non optimized pages, it will runs slow. Use a mid-resolution and highly optimized images for better performance.   
+* If you pass URLs to ultra hight resolution and non optimized pages, it will run slow. Use a mid-resolution and highly optimized images for better performance.   
 * I am new to React world. Feel free to contribute.  
 * If you find any issue, please, open an New issue on GitHub.
