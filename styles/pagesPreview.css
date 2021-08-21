@@ -18,7 +18,6 @@
     padding: 4px;
     cursor: pointer;
     transition: all .12s;
-    background-image: url('../img/img-placeholder.png');
     background-position: center;
     background-size: contain;
 }
