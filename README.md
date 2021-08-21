@@ -1,6 +1,7 @@
 # ComicReader
 ## ReactJS (with TypeScript) Comic book reader.   
 <hr>
+
 ### Usage
 1. Clone this repo or add a submodule to your project. *(I don't have a NPM package right now, but I'll create one as soon as possible)*  
 2. Import the component:
