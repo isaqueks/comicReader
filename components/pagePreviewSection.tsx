@@ -37,7 +37,7 @@ interface PreviewSectionProps {
 export default class PagePreviewSection extends React.Component<PreviewSectionProps> {
 
     private realElement: HTMLDivElement;
-    private selectedIndex = this.props.selectedIndex;
+    private selectedIndex = -1;
 
     state = {
         currentScrollTop: 0
