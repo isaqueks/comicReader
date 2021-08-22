@@ -1,0 +1,14 @@
+.pagePreviewSection {
+    display: block;
+    
+    width: 100%;
+    height: 100%;
+    
+    border: none;
+    border-right: var(--border);
+
+    overflow-y: scroll;
+
+    background-color: var(--theme);
+    box-shadow: var(--shadow);
+}

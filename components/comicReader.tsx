@@ -2,7 +2,7 @@ import React from 'react';
 import ComicDisplay from './comicDisplay';
 import '../styles/comicReader.css';
 import MenuBar from './menuBar';
-import PagesPreview from './pagesPreview';
+import PagePreviewSection from './pagePreviewSection';
 
 interface ComicReaderProps {
     pages: string[],
@@ -78,7 +78,7 @@ export default class ComicReader extends React.Component<ComicReaderProps> {
         return (<div tabIndex={0} className="comicReader" onKeyDown={e => this.handleKeyDown(e)}>
             <MenuBar onReturnClicked={this.state.onClose} currentPage={currentPageIndex} maxPages={pages.length} />
             <div className="mainContent">
-                <PagesPreview selectedIndex={currentPageIndex} urlArray={previewPages} click={index => this.setPageIndex(index)}/>
+                <PagePreviewSection selectedIndex={currentPageIndex} urlArray={previewPages} onSetPage={index => this.setPageIndex(index)}/>
                 <div className="contentCenter">
                     <ComicDisplay url={url} nextPage={next} prevPage={prev} clickLeft={e => this.prevPage()} clickRight={e => this.nextPage()} />
                 </div>
