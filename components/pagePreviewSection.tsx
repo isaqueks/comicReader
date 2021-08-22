@@ -34,22 +34,6 @@ interface PreviewSectionProps {
 }
 
 
-/*
-
-        if (window.innerWidth < 600) {
-            return (<div className="pagePreviewSection" />);
-        }
-        
-        const scrollTop = this.domElement?.scrollTop;
-        const scrollHeight = this.domElement?.scrollHeight;
-
-        // console.log({ scrollTop, scrollHeight });
-        
-        const content = (<div className="pagePreviewSection">
-            { props.urlArray ? buildPreviewList(props.selectedIndex, props.urlArray, scrollTop, scrollHeight, props.onSetPage || (() => { })) : ''}
-        </div>);
-*/
-
 export default class PagePreviewSection extends React.Component<PreviewSectionProps> {
 
     private realElement: HTMLDivElement;
