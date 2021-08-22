@@ -77,7 +77,9 @@ export default class PagesPreview extends React.Component<PagePreviewProps> {
         const selectedElement = document.querySelector(`[data-index="${this.props.selectedIndex}"]`) as HTMLElement;
 
         if (this.props.selectedIndex != this.state.currentIndex) {
-            selectedElement && selectedElement.scrollIntoView();
+            selectedElement && selectedElement.scrollIntoView({
+                behavior: 'smooth'
+            });
             this.setState({
                 currentIndex: this.props.selectedIndex
             });
