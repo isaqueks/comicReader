@@ -1,30 +1,7 @@
-import AssetManager from "./AssetManager";
+import { createRect, Point, Rect, Size } from "./Coords";
+import ImageAssetManager, { ImageAsset } from "./ImageManager";
+import AssetManager from "./ImageManager";
 
-interface Size {
-    w: number;
-    h: number;
-}
-
-interface Point {
-    x: number;
-    y: number;
-}
-
-interface Rect {
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-}
-
-function createRect(pos: Point, siz: Size): Rect {
-    return {
-        x: pos.x,
-        y: pos.y,
-        w: siz.w,
-        h: siz.h
-    }
-}
 
 export default class ComicRenderer {
 
@@ -32,7 +9,7 @@ export default class ComicRenderer {
     private canvas: HTMLCanvasElement;
 
     private renderHandler;
-    private pagesManager: AssetManager<HTMLImageElement>;
+    private pagesManager: AssetManager<ImageAsset>;
 
     private url: string;
     private prevPageUrl: string;
@@ -51,11 +28,7 @@ export default class ComicRenderer {
         const delay = 1000 / framesPerSecond;
         this.renderHandler = window.setInterval(this.renderFn.bind(this), delay);
         this.animationSpeed = 0.075 * (60 / framesPerSecond);
-        this.pagesManager = new AssetManager<HTMLImageElement>(blob => {
-            const img = new Image();
-            img.src = URL.createObjectURL(blob);
-            return img;
-        }, 100);
+        this.pagesManager = new ImageAssetManager();
     }
 
     public render(pageUrl: string, prevUrl?: string, nextUrl?: string) {
@@ -95,19 +68,23 @@ export default class ComicRenderer {
         }
     }
 
-    private drawImage(context: CanvasRenderingContext2D, img: HTMLImageElement, rect: Rect, offset?: Rect) {
-        context.drawImage(img, 
+    private drawImage(context: CanvasRenderingContext2D, img: ImageAsset, rect: Rect, offset?: Rect) {
+        if (!img.loaded) {
+            return;
+        }
+        context.drawImage(img.image, 
             offset?.x || 0, 
             offset?.y || 0, 
-            offset?.w || img.naturalWidth, 
-            offset?.h || img.naturalHeight,
+            offset?.w || img.image.naturalWidth, 
+            offset?.h || img.image.naturalHeight,
             rect.x, 
             rect.y, 
             rect.w, 
             rect.h);
     }
 
-    private resizeImage(img: HTMLImageElement, maxW: number, maxH : number): Size {
+    private resizeImage(imgAsset: ImageAsset, maxW: number, maxH : number): Size {
+        const img = imgAsset.image;
         const imgW = img.naturalWidth;
         const imgH = img.naturalHeight;
 
@@ -140,14 +117,16 @@ export default class ComicRenderer {
         }
     }
 
-    private async renderFn() {
+    private renderFn() {
         try {
-            await this.doRender();
+            this.doRender();
         }
-        catch {}
+        catch (e) {
+            console.error(`ComicReader: Got error`, e);
+        }
     }
 
-    private async doRender() {
+    private doRender() {
         if (!this.canvas) {
             this.canvas = document.querySelector(this.canvasSelector);
             return;
@@ -160,13 +139,13 @@ export default class ComicRenderer {
         const context = this.canvas.getContext('2d');
         const { width, height } = this.fixCanvasSize();
 
-        const img = await this.pagesManager.getItem(this.currentUrl);
+        const img = this.pagesManager.getItem(this.currentUrl);
         const imgSiz = this.resizeImage(img, width, height);
 
-        const prevImg = await this.pagesManager.getItem(this.currentPrevPageUrl);
+        const prevImg = this.pagesManager.getItem(this.currentPrevPageUrl);
         const prevSiz = this.resizeImage(prevImg, width, height);
 
-        const nextImg = await this.pagesManager.getItem(this.currentNextPageUrl);
+        const nextImg = this.pagesManager.getItem(this.currentNextPageUrl);
         const nextSiz = this.resizeImage(nextImg, width, height);
 
         const goneLeft = this.url == this.currentPrevPageUrl;
@@ -184,7 +163,7 @@ export default class ComicRenderer {
                 }
 
                 const currFadingOffset: Rect = {
-                    x: (this.animationStatus * img.naturalWidth),
+                    x: (this.animationStatus * img.image.naturalWidth),
                     y: 0,
                     w: 0,
                     h: 0
@@ -198,7 +177,7 @@ export default class ComicRenderer {
                 const nextFadingOffset: Rect = {
                     x: 0,
                     y: 0,
-                    w: (this.animationStatus * nextImg.naturalWidth),
+                    w: (this.animationStatus * nextImg.image.naturalWidth),
                     h: 0
                 }
 
@@ -219,7 +198,7 @@ export default class ComicRenderer {
                 const currFadingOffset: Rect = {
                     x: 0,
                     y: 0,
-                    w: ((1 - this.animationStatus) * img.naturalWidth),
+                    w: ((1 - this.animationStatus) * img.image.naturalWidth),
                     h: 0
                 }
 
@@ -230,13 +209,12 @@ export default class ComicRenderer {
                 }
 
                 const prevFadingOffset: Rect = {
-                    x: ((1 - this.animationStatus) * prevImg.naturalWidth),
+                    x: ((1 - this.animationStatus) * prevImg.image.naturalWidth),
                     y: 0,
                     w: 0,
                     h: 0
                 }
 
-                const oldW = imgSiz.w;
                 imgSiz.w *= (1 - this.animationStatus);
                 
                 this.drawImage(context, img, createRect(currFadingPos, imgSiz), currFadingOffset);
