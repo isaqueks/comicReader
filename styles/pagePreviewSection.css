@@ -7,7 +7,7 @@
     transition: all .5s;
 }
 
-.pagePreviewContainer.hidden {
+.pagePreviewContainer.panelHidden {
     transform: translateX(-200px);
     width: 0px;
 }
@@ -55,6 +55,6 @@
     transform: translate(5px, 0) rotate(45deg) scale(0.4);
 }
 
-.pagePreviewContainer.hidden .pagePreviewHideArrowIcon {
+.pagePreviewContainer.panelHidden .pagePreviewHideArrowIcon {
     transform: translate(0, 0) rotate(-135deg) scale(0.4);
 }

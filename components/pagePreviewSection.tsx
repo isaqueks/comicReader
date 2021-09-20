@@ -115,7 +115,7 @@ export default class PagePreviewSection extends React.Component<PreviewSectionPr
 
         const panelClasses = ['pagePreviewContainer'];
         if (!this.state.panelVisible) {
-            panelClasses.push('hidden');
+            panelClasses.push('panelHidden');
         }
         
         return (
