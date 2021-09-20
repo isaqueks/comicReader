@@ -29,5 +29,5 @@
 }
 
 .pagePreview.selected {
-    background-color: red;
+    background-color: var(--highlight-color);
 }

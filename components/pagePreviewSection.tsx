@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/pagePreviewSection.css';
-import pagePreview from './pagePreview';
+import PagePreview from './pagePreview';
 
 function buildPreviewList(
     selectedIndex: number, 
@@ -14,7 +14,7 @@ JSX.Element[] {
     
     for (let url of urls) {
         previewList.push(
-            pagePreview(
+            PagePreview(
                 selectedIndex, 
                 i++, 
                 url, 
@@ -40,7 +40,8 @@ export default class PagePreviewSection extends React.Component<PreviewSectionPr
     private selectedIndex = -1;
 
     state = {
-        currentScrollTop: 0
+        currentScrollTop: 0,
+        panelVisible: true
     }
 
     private getScrollTop() {
@@ -76,9 +77,9 @@ export default class PagePreviewSection extends React.Component<PreviewSectionPr
     }
 
     componentDidMount() {
-        this.realElement = document.querySelector<HTMLDivElement>('.pagePreviewSection');
-        this.realElement.addEventListener('scroll', this.scrollHandler.bind(this));
         window.setInterval(this.intervalListener.bind(this), 75);
+        this.realElement = document.querySelector<HTMLDivElement>('.pagePreviewSection');
+
         const scrollTop = this.getScrollTop();
         if (scrollTop != this.state.currentScrollTop) {
             this.setState({
@@ -93,17 +94,40 @@ export default class PagePreviewSection extends React.Component<PreviewSectionPr
         }
     }
 
+    togglePanel(event) {
+        const visible = this.state.panelVisible;
+        this.setState({
+            panelVisible: !visible
+        })
+    }
+
     render() {
 
         const { props } = this;
 
         if (window.innerWidth < 600 || !props.urlArray) {
-            return (<div className="pagePreviewSection" />);
+            return (
+                <div className="pagePreviewContainer">
+                    <div className="pagePreviewSection" />
+                </div>
+            );
+        }
+
+        const panelClasses = ['pagePreviewContainer'];
+        if (!this.state.panelVisible) {
+            panelClasses.push('hidden');
         }
         
-        return (<div className="pagePreviewSection">
-            { buildPreviewList(props.selectedIndex, props.urlArray, this.state.currentScrollTop, this.previewClicked.bind(this)) }
-        </div>);
+        return (
+        <div className={panelClasses.join(' ')}>
+            <div className="pagePreviewHideArrow" onClick={e => this.togglePanel(e)}>
+                <div className="pagePreviewHideArrowIcon" />
+            </div>
+            <div className="pagePreviewSection" onScroll={e => this.scrollHandler(e)}>
+                { buildPreviewList(props.selectedIndex, props.urlArray, this.state.currentScrollTop, this.previewClicked.bind(this)) }
+            </div>
+        </div>
+        );
     }
 
 }

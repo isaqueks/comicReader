@@ -1,7 +1,23 @@
+:root {
+    --hide-icon-size: 50px;
+}
+
+.pagePreviewContainer {
+    display: block;
+    transition: all .5s;
+}
+
+.pagePreviewContainer.hidden {
+    transform: translateX(-200px);
+    width: 0px;
+}
+
 .pagePreviewSection {
     display: block;
+
+    margin-top: calc(0px - var(--hide-icon-size));
     
-    width: 100%;
+    width: 200px;
     height: 100%;
     
     border: none;
@@ -11,4 +27,34 @@
 
     background-color: var(--theme);
     box-shadow: var(--shadow);
+}
+
+.pagePreviewHideArrow {
+    position: relative;
+    box-sizing: border-box;
+    width: var(--hide-icon-size);
+    height: var(--hide-icon-size);
+    top: 0px;
+    left: 200px;
+    background:linear-gradient(to bottom right, var(--theme) 50%, transparent 50%);
+    cursor: pointer;
+}
+
+.pagePreviewHideArrowIcon {
+
+    display: block;
+
+    transform-origin: center;
+
+    width: 30px;
+    height: 30px;
+    
+    border-left: 4px solid white;
+    border-bottom: 4px solid white;
+
+    transform: translate(5px, 0) rotate(45deg) scale(0.4);
+}
+
+.pagePreviewContainer.hidden .pagePreviewHideArrowIcon {
+    transform: translate(0, 0) rotate(-135deg) scale(0.4);
 }

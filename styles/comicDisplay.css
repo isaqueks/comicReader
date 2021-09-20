@@ -1,6 +1,7 @@
 :root {
     --comic-height: 100%;
     --comic-width: 100%;
+    --highlight-color: red;
 }
 
 .comic {

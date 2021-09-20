@@ -1,7 +1,7 @@
 import React from "react";
 import '../styles/pagePreview.css';
 
-export default function pagePreview(
+export default function PagePreview(
     selectedIndex: number, 
     index: number, 
     url: string, 

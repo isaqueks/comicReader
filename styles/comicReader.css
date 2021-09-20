@@ -39,8 +39,10 @@
     height: 100%;
 
     display: grid;
-    grid-template-columns: 200px auto;
+    grid-template-columns: auto auto;
     grid-template-rows: 100%;
+
+    overflow: hidden;
 }
 
 @media only screen and (max-width: 600px) {
