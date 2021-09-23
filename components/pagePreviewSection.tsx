@@ -41,11 +41,16 @@ export default class PagePreviewSection extends React.Component<PreviewSectionPr
 
     state = {
         currentScrollTop: 0,
-        panelVisible: true
+        panelVisible: true,
+        height: 0
     }
 
     private getScrollTop() {
         return this.realElement?.scrollTop || 0;
+    }
+
+    private getElementHeight() {
+        return this.realElement?.clientHeight || 0;
     }
 
     private scrollHandler(event) {
@@ -53,16 +58,18 @@ export default class PagePreviewSection extends React.Component<PreviewSectionPr
         const diff = Math.abs(scrollTop - this.state.currentScrollTop);
         if (diff > window.innerHeight) {
             this.setState({
-                currentScrollTop: scrollTop
+                currentScrollTop: scrollTop,
+                height: this.getElementHeight()
             })
         }
     }
 
     private scrollToSelected() {
+        
         if (this.realElement) {
 
             const selectedElement = this.realElement.querySelector(`[data-index="${this.props.selectedIndex}"]`)
-
+            
             selectedElement?.scrollIntoView({
                 behavior: 'smooth'
             })
@@ -74,12 +81,19 @@ export default class PagePreviewSection extends React.Component<PreviewSectionPr
             this.scrollToSelected();            
             this.selectedIndex = this.props.selectedIndex;
         }
+
+        if (this.getElementHeight() != this.state.height) {
+            this.setState({
+                height: this.getElementHeight()
+            });
+            this.scrollToSelected();
+        }
+
     }
 
     componentDidMount() {
         window.setInterval(this.intervalListener.bind(this), 75);
         this.realElement = document.querySelector<HTMLDivElement>('.pagePreviewSection');
-
         const scrollTop = this.getScrollTop();
         if (scrollTop != this.state.currentScrollTop) {
             this.setState({
@@ -107,7 +121,7 @@ export default class PagePreviewSection extends React.Component<PreviewSectionPr
 
         if (window.innerWidth < 600 || !props.urlArray) {
             return (
-                <div className="pagePreviewContainer">
+                <div className="pagePreviewContainer hidden">
                     <div className="pagePreviewSection" />
                 </div>
             );

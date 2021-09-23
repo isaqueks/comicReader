@@ -23,10 +23,15 @@
     border: none;
     border-right: var(--border);
 
+    overflow-x: hidden;
     overflow-y: scroll;
 
     background-color: var(--theme);
     box-shadow: var(--shadow);
+}
+
+.pagePreviewContainer.hidden .pagePreviewSection {
+    display: none;
 }
 
 .pagePreviewHideArrow {

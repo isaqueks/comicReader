@@ -70,17 +70,12 @@ export default class ComicReader extends React.Component<ComicReaderProps> {
             throw new Error('pages and previewPages must have the same length!');
         }
 
-        const url = pages[currentPageIndex];
-
-        const prev = pages[currentPageIndex-1];
-        const next = pages[currentPageIndex+1];
-
         return (<div tabIndex={0} className="comicReader" onKeyDown={e => this.handleKeyDown(e)}>
             <MenuBar onReturnClicked={this.state.onClose} currentPage={currentPageIndex} maxPages={pages.length} />
             <div className="mainContent">
                 <PagePreviewSection selectedIndex={currentPageIndex} urlArray={previewPages} onSetPage={index => this.setPageIndex(index)}/>
                 <div className="contentCenter">
-                    <ComicDisplay url={url} nextPage={next} prevPage={prev} clickLeft={e => this.prevPage()} clickRight={e => this.nextPage()} />
+                    <ComicDisplay pages={pages} currentIndex={currentPageIndex} onSetPage={i => this.setPageIndex(i)} />
                 </div>
             </div>
         </div>);

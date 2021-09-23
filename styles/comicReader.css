@@ -7,7 +7,7 @@
     --theme-light: rgb(128, 128, 128);
 }
 
-.comicReader * {
+.comicReader {
     padding: 0px;
     margin: 0px;
     box-sizing: border-box;
@@ -39,7 +39,7 @@
     height: 100%;
 
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 1fr;
     grid-template-rows: 100%;
 
     overflow: hidden;
