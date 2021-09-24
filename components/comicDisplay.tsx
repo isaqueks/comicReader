@@ -45,7 +45,7 @@ export default class ComicDisplay extends React.Component<ComicProps> {
         this.domElement.style.overflowX = 'hidden';
         setTimeout(() => {
             this.domElement.style.overflowX = 'scroll';
-        }, 50);
+        }, 80);
     }
 
     private touchStartHandler(e) {
