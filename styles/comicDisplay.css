@@ -27,6 +27,8 @@
     overflow-y: hidden;
     white-space: nowrap;
     text-align: center;
+    overscroll-behavior: none;
+    scroll-snap-type: x mandatory;
 }
 
 .comicDisplay::-webkit-scrollbar {

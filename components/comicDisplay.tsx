@@ -25,38 +25,34 @@ export default class ComicDisplay extends React.Component<ComicProps> {
     artificialScroll: boolean = false;
     domElement: HTMLElement;
 
-    isTouching: boolean = false;
-    scrollWhenTouchStart: number;
+    shouldIgnoreScrollStop: boolean = false;
+    scrollLeftBeforeScrollStarted: number;
 
     private nextPage() {
         if (this.props.currentIndex < this.state.pages.length - 1) {
+            this.shouldIgnoreScrollStop = true;
             this.props.onSetPage(this.props.currentIndex+1);
         }
     }
 
     private prevPage() {
         if (this.props.currentIndex > 0) {
+            this.shouldIgnoreScrollStop = true;
             this.props.onSetPage(this.props.currentIndex-1);
         }
     }
 
-    private stopScroll() {
-        if (!this.domElement) return;
-        this.domElement.style.overflowX = 'hidden';
-        setTimeout(() => {
-            this.domElement.style.overflowX = 'scroll';
-        }, 80);
-    }
+    private onScrollStop() {
+        
+        const [ sLeft, sBefore ] = [
+            this.domElement.scrollLeft, 
+            this.scrollLeftBeforeScrollStarted
+        ];
 
-    private touchStartHandler(e) {
-        this.isTouching = true;
-        this.scrollWhenTouchStart = this.domElement.scrollLeft;
-    }
+        const diff = (sLeft - sBefore);
 
-    private touchEndHandler(e) {
-        this.isTouching = false;
-        const diff = this.domElement.scrollLeft - this.scrollWhenTouchStart;
-        if (diff !== 0) {
+        if (!this.shouldIgnoreScrollStop && diff !== 0) {
+
             if (Math.abs(diff) > 20) {
                 if (diff > 0) {
                     this.nextPage();
@@ -68,32 +64,10 @@ export default class ComicDisplay extends React.Component<ComicProps> {
             else {
                 this.scrollToCorrectIndex(true);
             }
-            this.stopScroll();
         }
+        this.shouldIgnoreScrollStop = false;
     }
 
-    private scrollHandler(e) {
-        if (this.artificialScroll || !this.domElement) {
-            return;
-        }
-
-        const scrollLeft = this.domElement.scrollLeft;
-        const scrollW = this.domElement.scrollWidth;
-        const pageW = this.domElement.firstElementChild.clientWidth;
-
-        // 50 tolerance
-        if (this.isTouching) {
-            if ((scrollLeft >= scrollW - pageW - 50) || scrollLeft <= 50) {
-                this.touchEndHandler(e);
-            }
-            if ((this.state.showingIndex === 0 && scrollLeft < (pageW - 100)) ||
-                (this.state.showingIndex === this.state.pages.length - 1 && scrollLeft > pageW + 100)) {
-                this.touchEndHandler(e);
-                this.scrollToCorrectIndex(true);
-            }
-        }
-        
-    }
 
     private clickHandler(e: any) {
         const { clientX, clientY, target } = e;
@@ -123,8 +97,11 @@ export default class ComicDisplay extends React.Component<ComicProps> {
         }
 
         const diff = currentIndex - showingIndex;
+
         if (Math.abs(diff) === 1) {
+            
             this.setScrollLeft(1 + diff, false, () => {
+                
                 this.setState({
                     showingIndex: currentIndex
                 }, () => {
@@ -152,12 +129,26 @@ export default class ComicDisplay extends React.Component<ComicProps> {
         this.scrollToCorrectIndex();
 
         let lastWidth = this.domElement?.clientWidth;
+        let lastScrollLeft = 0;
+        let scrollStopFired = false;
+        this.scrollLeftBeforeScrollStarted = this.domElement?.scrollLeft;
         setInterval(() => {
-            if (this.domElement && lastWidth && Math.abs(lastWidth - this.domElement.clientWidth) > 0) {
+            if (!this.domElement) return;
+            if (lastWidth && Math.abs(lastWidth - this.domElement.clientWidth) > 0) {
                 this.scrollToCorrectIndex();  
             }
             lastWidth = this.domElement.clientWidth;
-        }, 100);
+
+            if (this.domElement.scrollLeft != lastScrollLeft) {
+                scrollStopFired = false;
+                lastScrollLeft = this.domElement.scrollLeft;
+            }
+            else if (!scrollStopFired) {
+                scrollStopFired = true;
+                this.onScrollStop();
+                this.scrollLeftBeforeScrollStarted = this.domElement?.scrollLeft;
+            }
+        }, 70);
     }
 
     componentDidUpdate() {
@@ -178,8 +169,12 @@ export default class ComicDisplay extends React.Component<ComicProps> {
 
         const desired = step * this.domElement.firstElementChild.clientWidth;
 
+        if (desired === this.domElement.scrollLeft) {
+            return callback && callback(desired);
+        }
+
         this.domElement.onscroll = (e) => {
-            
+
             // 10px tolerance to bypass firefox bug
             if (Math.abs(this.domElement.scrollLeft - desired) <= 10) {
                 this.artificialScroll = false;
@@ -187,6 +182,7 @@ export default class ComicDisplay extends React.Component<ComicProps> {
             }
         }
         
+        // this.scrollLeftBeforeScrollStarted = desired;
         this.artificialScroll = true;
         this.domElement.scroll({
             left: step * this.domElement.firstElementChild.clientWidth,
@@ -196,15 +192,11 @@ export default class ComicDisplay extends React.Component<ComicProps> {
 
     render() {
 
-        const { pages, currentIndex } = this.props;
+        const { pages } = this.props;
 
         return <div 
             className="comicDisplay" 
-            onClick={e => this.clickHandler(e)} 
-            onScroll={e => this.scrollHandler(e)}
-            onTouchStart={e => this.touchStartHandler(e)}
-            onTouchEnd={e => this.touchEndHandler(e)}
-            >
+            onClick={e => this.clickHandler(e)}>
             {this.getThreePages(this.state.showingIndex, pages)}
         </div>;
 

@@ -9,3 +9,8 @@
     background-size: contain;
 
 }
+
+.comicPage[style^="background-image"] {
+    scroll-snap-stop: always;
+    scroll-snap-align: center;
+}

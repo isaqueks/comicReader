@@ -6,5 +6,5 @@ export default function ComicPage(props) {
         backgroundImage: `url("${props.src}")`
     }
 
-    return <div className="comicPage" style={style}></div>
+    return <div className="comicPage" style={ props.src && style}></div>
 }
